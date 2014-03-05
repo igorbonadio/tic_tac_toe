@@ -1,5 +1,5 @@
 -module(roboto_tic_tac_toe_3d).
--export([create/0, set/6, get/5, check_end/1]).
+-export([create/0, set/6, get/5, check_end/1, score/2]).
 
 create() -> {tic_tac_toe_3d_board, {tic_tac_toe_3d_row, roboto_tic_tac_toe:create(), roboto_tic_tac_toe:create(), roboto_tic_tac_toe:create()},
                                    {tic_tac_toe_3d_row, roboto_tic_tac_toe:create(), roboto_tic_tac_toe:create(), roboto_tic_tac_toe:create()},
@@ -41,3 +41,15 @@ check_end({tic_tac_toe_3d_board, {tic_tac_toe_3d_row, A, B, C},
   roboto_tic_tac_toe:check_end(E) and roboto_tic_tac_toe:check_end(F) and
   roboto_tic_tac_toe:check_end(G) and roboto_tic_tac_toe:check_end(H) and
   roboto_tic_tac_toe:check_end(I).
+
+score({tic_tac_toe_3d_board, {tic_tac_toe_3d_row, A, B, C},
+                             {tic_tac_toe_3d_row, D, E, F},
+                             {tic_tac_toe_3d_row, G, H, I}}, Piece) ->
+  score_aux([A, B, C, D, E, F, G, H, I], Piece, 0).
+
+score_aux([], _, Score) -> Score;
+score_aux([Board| BoardList], Piece, Score) ->
+  case roboto_tic_tac_toe:check_winner(Board, Piece) of
+    true  -> score_aux(BoardList, Piece, Score + 1);
+    false -> score_aux(BoardList, Piece, Score)
+  end.
