@@ -1,5 +1,5 @@
 -module(roboto_tic_tac_toe_3d).
--compile(export_all).
+-export([create/0, set/6]).
 
 create() -> {tic_tac_toe_3d_board, {tic_tac_toe_3d_row, roboto_tic_tac_toe:create(), roboto_tic_tac_toe:create(), roboto_tic_tac_toe:create()},
                                    {tic_tac_toe_3d_row, roboto_tic_tac_toe:create(), roboto_tic_tac_toe:create(), roboto_tic_tac_toe:create()},
