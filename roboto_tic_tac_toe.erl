@@ -1,5 +1,5 @@
 -module(roboto_tic_tac_toe).
--compile(export_all).
+-export([create/0, set/4]).
 
 create() ->
   {tic_tac_toe_board, {tic_tac_toe_row, empty, empty, empty},
