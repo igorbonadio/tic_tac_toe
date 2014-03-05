@@ -1,5 +1,5 @@
 -module(roboto_tic_tac_toe).
--export([create/0, set/4, get/3]).
+-export([create/0, set/4, get/3, check_winner/2]).
 
 create() ->
   {tic_tac_toe_board, {tic_tac_toe_row, empty, empty, empty},
@@ -33,3 +33,45 @@ get_row({tic_tac_toe_row, _, Column1, _}, 1) ->
   Column1;
 get_row({tic_tac_toe_row, _, _, Column2}, 2) ->
   Column2.
+
+check_winner({tic_tac_toe_board, {tic_tac_toe_row, A, B, C},
+                                 {tic_tac_toe_row, _, _, _},
+                                 {tic_tac_toe_row, _, _, _}}, Piece)
+  when (A == B) and (B == C) and (C == Piece) -> true;
+
+check_winner({tic_tac_toe_board, {tic_tac_toe_row, _, _, _},
+                                 {tic_tac_toe_row, A, B, C},
+                                 {tic_tac_toe_row, _, _, _}}, Piece)
+  when (A == B) and (B == C) and (C == Piece) -> true;
+
+check_winner({tic_tac_toe_board, {tic_tac_toe_row, _, _, _},
+                                 {tic_tac_toe_row, _, _, _},
+                                 {tic_tac_toe_row, A, B, C}}, Piece)
+  when (A == B) and (B == C) and (C == Piece) -> true;
+
+check_winner({tic_tac_toe_board, {tic_tac_toe_row, A, _, _},
+                                 {tic_tac_toe_row, B, _, _},
+                                 {tic_tac_toe_row, C, _, _}}, Piece)
+  when (A == B) and (B == C) and (C == Piece) -> true;
+
+check_winner({tic_tac_toe_board, {tic_tac_toe_row, _, A, _},
+                                 {tic_tac_toe_row, _, B, _},
+                                 {tic_tac_toe_row, _, C, _}}, Piece)
+  when (A == B) and (B == C) and (C == Piece) -> true;
+
+check_winner({tic_tac_toe_board, {tic_tac_toe_row, _, _, A},
+                                 {tic_tac_toe_row, _, _, B},
+                                 {tic_tac_toe_row, _, _, C}}, Piece)
+  when (A == B) and (B == C) and (C == Piece) -> true;
+
+check_winner({tic_tac_toe_board, {tic_tac_toe_row, A, _, _},
+                                 {tic_tac_toe_row, _, B, _},
+                                 {tic_tac_toe_row, _, _, C}}, Piece)
+  when (A == B) and (B == C) and (C == Piece) -> true;
+
+check_winner({tic_tac_toe_board, {tic_tac_toe_row, _, _, A},
+                                 {tic_tac_toe_row, _, B, _},
+                                 {tic_tac_toe_row, C, _, _}}, Piece)
+  when (A == B) and (B == C) and (C == Piece) -> true;
+
+check_winner(_, _) -> false.
