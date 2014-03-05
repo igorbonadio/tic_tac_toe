@@ -1,5 +1,5 @@
 -module(roboto_tic_tac_toe_3d).
--export([create/0, set/6, get/5]).
+-export([create/0, set/6, get/5, check_end/1]).
 
 create() -> {tic_tac_toe_3d_board, {tic_tac_toe_3d_row, roboto_tic_tac_toe:create(), roboto_tic_tac_toe:create(), roboto_tic_tac_toe:create()},
                                    {tic_tac_toe_3d_row, roboto_tic_tac_toe:create(), roboto_tic_tac_toe:create(), roboto_tic_tac_toe:create()},
@@ -32,3 +32,12 @@ get_row({tic_tac_toe_3d_row, _, Column1, _}, 1, InnerRowNumber, InnerColumnNumbe
   roboto_tic_tac_toe:get(Column1, InnerRowNumber, InnerColumnNumber);
 get_row({tic_tac_toe_3d_row, _, _, Column2}, 2, InnerRowNumber, InnerColumnNumber) ->
   roboto_tic_tac_toe:get(Column2, InnerRowNumber, InnerColumnNumber).
+
+check_end({tic_tac_toe_3d_board, {tic_tac_toe_3d_row, A, B, C},
+                                 {tic_tac_toe_3d_row, D, E, F},
+                                 {tic_tac_toe_3d_row, G, H, I}}) ->
+  roboto_tic_tac_toe:check_end(A) and roboto_tic_tac_toe:check_end(B) and
+  roboto_tic_tac_toe:check_end(C) and roboto_tic_tac_toe:check_end(D) and
+  roboto_tic_tac_toe:check_end(E) and roboto_tic_tac_toe:check_end(F) and
+  roboto_tic_tac_toe:check_end(G) and roboto_tic_tac_toe:check_end(H) and
+  roboto_tic_tac_toe:check_end(I).
