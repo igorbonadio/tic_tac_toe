@@ -1,5 +1,5 @@
 -module(roboto_tic_tac_toe).
--export([create/0, set/4, get/3, check_winner/2, check_end/1]).
+-export([create/0, set/4, get/3, check_winner/2, check_end/1, display/1]).
 
 create() ->
   {tic_tac_toe_board, {tic_tac_toe_row, empty, empty, empty},
@@ -83,3 +83,16 @@ check_end({tic_tac_toe_board, {tic_tac_toe_row, A, B, C},
        (D =/= empty) and (E =/= empty) and (F =/= empty) and
        (G =/= empty) and (H =/= empty) and (I =/= empty) -> true;
 check_end(Board) -> check_winner(Board, cross) or check_winner(Board, nought).
+
+display({tic_tac_toe_board, {tic_tac_toe_row, A, B, C},
+                            {tic_tac_toe_row, D, E, F},
+                            {tic_tac_toe_row, G, H, I}}) ->
+  io:fwrite(" ~s | ~s | ~s \n", [symbol(A), symbol(B), symbol(C)]),
+  io:fwrite("---+---+---\n"),
+  io:fwrite(" ~s | ~s | ~s \n", [symbol(D), symbol(E), symbol(F)]),
+  io:fwrite("---+---+---\n"),
+  io:fwrite(" ~s | ~s | ~s \n", [symbol(G), symbol(H), symbol(I)]).
+
+symbol(empty)  -> " ";
+symbol(cross)  -> "x";
+symbol(nought) -> "o".
