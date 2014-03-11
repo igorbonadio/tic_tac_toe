@@ -18,11 +18,17 @@ handle_call(connect, _From, State) ->
 handle_call({move, BoardX, BoardY, X, Y}, _From, State) ->
   {reply, roboto_tic_tac_toe_3d_game:move(BoardX, BoardY, X, Y), State}.
 
-handle_cast({your_turn, {board, Board}}, State) ->
+handle_cast({your_turn, {last_moviment, none}, {board, Board}}, State) ->
   roboto_tic_tac_toe_3d:display(Board),
+  io:fwrite("You can choose where to put your piece!\n"),
   {noreply, State};
 
-handle_cast({end_of_game, {winner, Winner}, {board, Board}}, State) ->
+handle_cast({your_turn, {last_moviment, X, Y}, {board, Board}}, State) ->
+  roboto_tic_tac_toe_3d:display(Board),
+  io:fwrite("Current Board: ~w, ~w\n", [X, Y]),
+  {noreply, State};
+
+handle_cast({end_of_game, {winner, _Winner}, {board, Board}}, State) ->
   roboto_tic_tac_toe_3d:display(Board),
   {noreply, State}.
 
