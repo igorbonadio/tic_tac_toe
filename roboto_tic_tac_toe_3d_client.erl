@@ -7,14 +7,22 @@ start() -> gen_server:start_link({local, ?SERVER}, ?MODULE, [], []).
 stop()  -> gen_server:call(?MODULE, stop).
 
 connect() -> gen_server:call(?MODULE, connect).
+move(BoardX, BoardY, X, Y) -> gen_server:call(?MODULE, {move, BoardX, BoardY, X, Y}).
 
 init([]) -> {ok, []}.
 
 handle_call(connect, _From, State) ->
   roboto_tic_tac_toe_3d_game:connect(),
-  {reply, ok, State}.
+  {reply, ok, State};
+
+handle_call({move, BoardX, BoardY, X, Y}, _From, State) ->
+  {reply, roboto_tic_tac_toe_3d_game:move(BoardX, BoardY, X, Y), State}.
 
 handle_cast({your_turn, {board, Board}}, State) ->
+  roboto_tic_tac_toe_3d:display(Board),
+  {noreply, State};
+
+handle_cast({end_of_game, {winner, Winner}, {board, Board}}, State) ->
   roboto_tic_tac_toe_3d:display(Board),
   {noreply, State}.
 
