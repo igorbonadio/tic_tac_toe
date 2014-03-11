@@ -23,20 +23,29 @@ handle_call(connect, From, Game) ->
   end,
   {reply, {ok, {player_symbol, player_symbol(N)}}, Game2};
 
-handle_call({move, BoardX, BoardY, X, Y}, _From, Game) ->
-  {tic_tac_toe_3d, _, _, LastMoviment, _} = Game,
-  case LastMoviment of
-    {last_moviment, none} -> do_move(Game, BoardX, BoardY, X, Y);
-    {last_moviment, LastX, LastY} -> if
-      (LastX == BoardX) and (LastY == BoardY) -> do_move(Game, BoardX, BoardY, X, Y);
-      true -> {reply, {error, wrong_place}, Game}
-    end
+handle_call({move, BoardX, BoardY, X, Y}, From, Game) ->
+  case check_player(From, Game) of
+    true ->
+      {tic_tac_toe_3d, _, _, LastMoviment, _} = Game,
+      case LastMoviment of
+        {last_moviment, none} -> do_move(Game, BoardX, BoardY, X, Y);
+        {last_moviment, LastX, LastY} -> if
+          (LastX == BoardX) and (LastY == BoardY) -> do_move(Game, BoardX, BoardY, X, Y);
+          true -> {reply, {error, wrong_place}, Game}
+        end
+      end;
+    false -> {reply, {error, wait_your_turn}, Game}
   end.
 
 handle_cast(_Msg, State)            -> {noreply, State}.
 handle_info(_Info, State)           -> {noreply, State}.
 terminate(_Reason, _State)          -> ok.
 code_change(_OldVsn, State, _Extra) -> {ok, State}.
+
+check_player({Player, _}, {tic_tac_toe_3d, {players, _, {Pid, _}, _}, {current_player, 1}, _, _}) ->
+  Pid == Player;
+check_player({Player, _}, {tic_tac_toe_3d, {players, _, _, {Pid, _}}, {current_player, 2}, _, _}) ->
+  Pid == Player.
 
 add_player({tic_tac_toe_3d, {players, 0, _, _}, _, _, Board}, Player1) ->
   {tic_tac_toe_3d, {players, 1, Player1, empty}, {current_player, 1}, {last_moviment, none}, Board};
@@ -73,7 +82,7 @@ next_player({tic_tac_toe_3d, {players, _, {Pid, _}, _}, {current_player, 1}, Las
 next_player({tic_tac_toe_3d, {players, _, _, {Pid, _}}, {current_player, 2}, LastMoviment, {board, Board}}) ->
   gen_server:cast(Pid, {your_turn, LastMoviment, {board, Board}}).
 
-last_moviment(Board, {last_moviment, none}) -> {last_moviment, none};
+last_moviment(_Board, {last_moviment, none}) -> {last_moviment, none};
 last_moviment(Board, {last_moviment, X, Y}) ->
   case roboto_tic_tac_toe:check_end(roboto_tic_tac_toe_3d:get_board(Board, X, Y)) of
     true -> {last_moviment, none};
