@@ -1,5 +1,5 @@
 -module(roboto_tic_tac_toe).
--export([create/0, set/4, get/3, check_winner/2, check_end/1, display/1]).
+-export([create/0, set/4, get/3, check_winner/2, check_end/1, check_full/1, display/1]).
 
 create() ->
   {tic_tac_toe_board, {tic_tac_toe_row, empty, empty, empty},
@@ -76,13 +76,15 @@ check_winner({tic_tac_toe_board, {tic_tac_toe_row, _, _, A},
 
 check_winner(_, _) -> false.
 
-check_end({tic_tac_toe_board, {tic_tac_toe_row, A, B, C},
+check_full({tic_tac_toe_board, {tic_tac_toe_row, A, B, C},
                               {tic_tac_toe_row, D, E, F},
                               {tic_tac_toe_row, G, H, I}})
   when (A =/= empty) and (B =/= empty) and (C =/= empty) and
        (D =/= empty) and (E =/= empty) and (F =/= empty) and
        (G =/= empty) and (H =/= empty) and (I =/= empty) -> true;
-check_end(Board) -> check_winner(Board, cross) or check_winner(Board, nought).
+check_full(_Board) -> false.
+
+check_end(Board) -> check_winner(Board, cross) or check_winner(Board, nought) or check_full(Board).
 
 display({tic_tac_toe_board, {tic_tac_toe_row, A, B, C},
                             {tic_tac_toe_row, D, E, F},

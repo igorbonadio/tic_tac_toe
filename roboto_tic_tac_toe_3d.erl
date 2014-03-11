@@ -1,5 +1,5 @@
 -module(roboto_tic_tac_toe_3d).
--export([create/0, set/6, get/5, check_end/1, score/2, display/1]).
+-export([create/0, set/6, get/5, check_end/1, score/2, display/1, get_board/3]).
 
 create() -> {tic_tac_toe_3d_board, {tic_tac_toe_3d_row, roboto_tic_tac_toe:create(), roboto_tic_tac_toe:create(), roboto_tic_tac_toe:create()},
                                    {tic_tac_toe_3d_row, roboto_tic_tac_toe:create(), roboto_tic_tac_toe:create(), roboto_tic_tac_toe:create()},
@@ -32,6 +32,34 @@ get_row({tic_tac_toe_3d_row, _, Column1, _}, 1, InnerRowNumber, InnerColumnNumbe
   roboto_tic_tac_toe:get(Column1, InnerRowNumber, InnerColumnNumber);
 get_row({tic_tac_toe_3d_row, _, _, Column2}, 2, InnerRowNumber, InnerColumnNumber) ->
   roboto_tic_tac_toe:get(Column2, InnerRowNumber, InnerColumnNumber).
+
+get_board({tic_tac_toe_3d_board, {tic_tac_toe_3d_row, Board, _, _},
+                                 {tic_tac_toe_3d_row, _, _, _},
+                                 {tic_tac_toe_3d_row, _, _, _}}, 0, 0) -> Board;
+get_board({tic_tac_toe_3d_board, {tic_tac_toe_3d_row, _, Board, _},
+                                 {tic_tac_toe_3d_row, _, _, _},
+                                 {tic_tac_toe_3d_row, _, _, _}}, 0, 1) -> Board;
+get_board({tic_tac_toe_3d_board, {tic_tac_toe_3d_row, _, _, Board},
+                                 {tic_tac_toe_3d_row, _, _, _},
+                                 {tic_tac_toe_3d_row, _, _, _}}, 0, 2) -> Board;
+get_board({tic_tac_toe_3d_board, {tic_tac_toe_3d_row, _, _, _},
+                                 {tic_tac_toe_3d_row, Board, _, _},
+                                 {tic_tac_toe_3d_row, _, _, _}}, 1, 0) -> Board;
+get_board({tic_tac_toe_3d_board, {tic_tac_toe_3d_row, _, _, _},
+                                 {tic_tac_toe_3d_row, _, Board, _},
+                                 {tic_tac_toe_3d_row, _, _, _}}, 1, 1) -> Board;
+get_board({tic_tac_toe_3d_board, {tic_tac_toe_3d_row, _, _, _},
+                                 {tic_tac_toe_3d_row, _, _, Board},
+                                 {tic_tac_toe_3d_row, _, _, _}}, 1, 2) -> Board;
+get_board({tic_tac_toe_3d_board, {tic_tac_toe_3d_row, _, _, _},
+                                 {tic_tac_toe_3d_row, _, _, _},
+                                 {tic_tac_toe_3d_row, Board, _, _}}, 2, 0) -> Board;
+get_board({tic_tac_toe_3d_board, {tic_tac_toe_3d_row, _, _, _},
+                                 {tic_tac_toe_3d_row, _, _, _},
+                                 {tic_tac_toe_3d_row, _, Board, _}}, 2, 1) -> Board;
+get_board({tic_tac_toe_3d_board, {tic_tac_toe_3d_row, _, _, _},
+                                 {tic_tac_toe_3d_row, _, _, _},
+                                 {tic_tac_toe_3d_row, _, _, Board}}, 2, 2) -> Board.
 
 check_end({tic_tac_toe_3d_board, {tic_tac_toe_3d_row, A, B, C},
                                  {tic_tac_toe_3d_row, D, E, F},

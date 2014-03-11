@@ -24,11 +24,13 @@ handle_call(connect, From, Game) ->
   {reply, {ok, {player_symbol, player_symbol(N)}}, Game2};
 
 handle_call({move, BoardX, BoardY, X, Y}, _From, Game) ->
-  {tic_tac_toe_3d, _, _, _, {board, Board}} = Game,
-  case roboto_tic_tac_toe_3d:get(Board, BoardX, BoardY, X, Y) of
-    empty -> {reply, ok, do_move(Game, BoardX, BoardY, X, Y)};
-    cross -> {reply, {error, there_is_a_cross_in_this_place}, Game};
-    nought -> {reply, {error, there_is_a_nought_in_this_place}, Game}
+  {tic_tac_toe_3d, _, _, LastMoviment, _} = Game,
+  case LastMoviment of
+    {last_moviment, none} -> do_move(Game, BoardX, BoardY, X, Y);
+    {last_moviment, LastX, LastY} -> if
+      (LastX == BoardX) and (LastY == BoardY) -> do_move(Game, BoardX, BoardY, X, Y);
+      true -> {reply, {error, wrong_place}, Game}
+    end
   end.
 
 handle_cast(_Msg, State)            -> {noreply, State}.
@@ -45,9 +47,20 @@ player_symbol(1) -> cross;
 player_symbol(2) -> nought.
 
 do_move(Game, BoardX, BoardY, X, Y) ->
+  {tic_tac_toe_3d, _, _, _, {board, Board}} = Game,
+  case roboto_tic_tac_toe_3d:get(Board, BoardX, BoardY, X, Y) of
+    empty -> case roboto_tic_tac_toe:check_end(roboto_tic_tac_toe_3d:get_board(Board, BoardX, BoardY)) of
+      true -> {reply, {error, wrong_place}, Game};
+      false -> {reply, ok, do_move2(Game, BoardX, BoardY, X, Y)}
+    end;
+    cross -> {reply, {error, wrong_place}, Game};
+    nought -> {reply, {error, wrong_place}, Game}
+  end.
+
+do_move2(Game, BoardX, BoardY, X, Y) ->
   {tic_tac_toe_3d, Players, {current_player, CurrentPlayer}, _, {board, Board}} = Game,
   Board2 = roboto_tic_tac_toe_3d:set(Board, BoardX, BoardY, X, Y, player_symbol(CurrentPlayer)),
-  Game2 = {tic_tac_toe_3d, Players, {current_player, next_player_id(CurrentPlayer)}, {last_moviment, X, Y}, {board, Board2}},
+  Game2 = {tic_tac_toe_3d, Players, {current_player, next_player_id(CurrentPlayer)}, last_moviment(Board2, {last_moviment, X, Y}), {board, Board2}},
   case roboto_tic_tac_toe_3d:check_end(Board2) of
     true -> end_game(Game2);
     false -> next_player(Game2)
@@ -59,6 +72,13 @@ next_player({tic_tac_toe_3d, {players, _, {Pid, _}, _}, {current_player, 1}, Las
 
 next_player({tic_tac_toe_3d, {players, _, _, {Pid, _}}, {current_player, 2}, LastMoviment, {board, Board}}) ->
   gen_server:cast(Pid, {your_turn, LastMoviment, {board, Board}}).
+
+last_moviment(Board, {last_moviment, none}) -> {last_moviment, none};
+last_moviment(Board, {last_moviment, X, Y}) ->
+  case roboto_tic_tac_toe:check_end(roboto_tic_tac_toe_3d:get_board(Board, X, Y)) of
+    true -> {last_moviment, none};
+    false -> {last_moviment, X, Y}
+  end.
 
 next_player_id(1) -> 2;
 next_player_id(2) -> 1.
